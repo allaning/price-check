@@ -109,7 +109,7 @@ if True:
 
 if True:
     log.log_info(divider)
-    log.log_info('Best Buy - BIC F12 12" Subwoofer')
+    log.log_info('BIC F12 12" Subwoofer')
     log.log_info('     (210 = arbitrary target price)')
     url = "http://www.bestbuy.com/site/bic-america-formula-12-475w-powered-subwoofer-black/4235056.p?id=1218463773881&skuId=4235056"
     content = ""
@@ -121,13 +121,13 @@ if True:
     price = soup.find_all("div", class_="item-price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.log_info("     %s" % match.group(0))
+        log.log_info("     %s - Best Buy" % match.group(0))
     else:
-        log.log_info("  Error retrieving price.")
+        log.log_info("  Error retrieving price - Best Buy")
 
 if True:
     log.log_info(divider)
-    log.log_info('Newegg - Polk PSW505 12" Subwoofer')
+    log.log_info('Polk PSW505 12" Subwoofer')
     log.log_info('     (124 = target price)')
     url = "http://www.newegg.com/Product/Product.aspx?Item=N82E16882290130"
     content = ""
@@ -139,13 +139,28 @@ if True:
     price = soup.find_all("meta", itemprop="price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.log_info("     %s" % match.group(0))
+        log.log_info("     %s - Newegg.com" % match.group(0))
     else:
-        log.log_info("  Error retrieving price.")
+        log.log_info("  Error retrieving price - Newegg.com")
+
+if True:
+    url = "https://www.amazon.com/Polk-Audio-12-Inch-Powered-Subwoofer/dp/B000092TT0"
+    content = ""
+    try:
+        content = urllib2.urlopen(url).read()
+    except:
+        pass
+    soup = BeautifulSoup(content)
+    price = soup.find_all("span", class_="a-color-price")
+    match = re.search("\d+\.\d\d", str(price))
+    if match != None:
+        log.log_info("     %s - Amazon.com" % match.group(0))
+    else:
+        log.log_info("  Error retrieving price - Amazon.com")
 
 if True:
     log.log_info(divider)
-    log.log_info('Nebraska Furniture Mart - Polk PSW125 12" Subwoofer')
+    log.log_info('Polk PSW125 12" Subwoofer')
     log.log_info('     (265 = target price)')
     url = "https://www.nfm.com/DetailsPage.aspx?productid=31539166"
     content = ""
@@ -157,16 +172,16 @@ if True:
     price = soup.find_all("div", class_="yourprice")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.log_info("     %s" % match.group(0))
+        log.log_info("     %s - Nebraska Furniture Mart" % match.group(0))
     else:
-        log.log_info("  Error retrieving price.")
+        log.log_info("  Error retrieving price - Nebraska Furniture Mart")
 
 
 # Misc
 
 if True:
     log.log_info(divider)
-    log.log_info('Dick\'s Sporting Goods - Century Wavemaster')
+    log.log_info('Century Wavemaster')
     url = "http://www.dickssportinggoods.com/product/index.jsp?productId=12447161"
     content = ""
     try:
@@ -177,9 +192,9 @@ if True:
     price = soup.find_all("span", itemprop="price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.log_info("     %s" % match.group(0))
+        log.log_info("     %s - Dick\'s Sporting Goods" % match.group(0))
     else:
-        log.log_info("  Error retrieving price.")
+        log.log_info("  Error retrieving price - Dick\'s Sporting Goods")
 
 log.log_info(divider)
 
