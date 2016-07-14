@@ -8,13 +8,13 @@ class ConsoleLogger(Logger):
         if logger != None:
             self.baseLogger = logger
 
-    def logInfo(self, msg):
+    def log_info(self, msg):
         """ Log info message """
         if self.baseLogger != None:
-            self.baseLogger.logInfo(msg)
+            self.baseLogger.log_info(msg)
         print(msg)
 
-    def getLog(self):
+    def get_log(self):
         """ Returns the log message, if any """
         pass
 

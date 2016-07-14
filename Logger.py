@@ -5,11 +5,11 @@ class Logger(object):
         self.baseLogger = None
         pass
 
-    def logInfo(self, msg):
+    def log_info(self, msg):
         """ Log info message """
         pass
 
-    def getLog(self):
+    def get_log(self):
         """ Returns the log message, if any """
         pass
 

@@ -22,15 +22,15 @@ else:
     print("Usage: python PriceCheck.py your@emailaddress.com")
     exit()
 
-log.logInfo("Price check...\n")
+log.log_info("Price check...\n")
 
 
 # Merrell shoes
 
 if True:
-    log.logInfo(divider)
-    log.logInfo('Merrell Moab Ventilator Wide')
-    log.logInfo('     (80 = target price)')
+    log.log_info(divider)
+    log.log_info('Merrell Moab Ventilator Wide')
+    log.log_info('     (80 = target price)')
     url = "http://www.merrell.com/US/en/moab-ventilator-wide-width/16220M.html"
     content = ""
     try:
@@ -41,14 +41,14 @@ if True:
     price = soup.find_all("span", class_="promo-price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     SALE: %s - Merrell.com" % match.group(0))
+        log.log_info("     SALE: %s - Merrell.com" % match.group(0))
     else:
         price = soup.find_all("span", itemprop="price")
         match = re.search("\d+\.\d\d", str(price))
         if match != None:
-            log.logInfo("     %s - Merrell.com" % match.group(0))
+            log.log_info("     %s - Merrell.com" % match.group(0))
         else:
-            log.logInfo("  Error retrieving price.")
+            log.log_info("  Error retrieving price.")
 
 if True:
     url = "http://www.dickssportinggoods.com/product/index.jsp?productId=2979956"
@@ -61,9 +61,9 @@ if True:
     price = soup.find_all("span", itemprop="price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     %s - Dick\'s Sporting Goods" % match.group(0))
+        log.log_info("     %s - Dick\'s Sporting Goods" % match.group(0))
     else:
-        log.logInfo("  Error retrieving price - Dick\'s Sporting Goods")
+        log.log_info("  Error retrieving price - Dick\'s Sporting Goods")
 
 if True:
     url = "https://www.rei.com/product/748515/merrell-moab-ventilator-hiking-shoes-mens"
@@ -76,15 +76,15 @@ if True:
     price = soup.find_all("span", itemprop="price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     %s - REI" % match.group(0))
+        log.log_info("     %s - REI" % match.group(0))
     else:
-        log.logInfo("  Error retrieving price - REI")
+        log.log_info("  Error retrieving price - REI")
 
 
 if True:
-    log.logInfo(divider)
-    log.logInfo('Merrell FST Wide')
-    log.logInfo('     (90 = arbitrary target price)')
+    log.log_info(divider)
+    log.log_info('Merrell FST Wide')
+    log.log_info('     (90 = arbitrary target price)')
     url = "http://www.merrell.com/US/en/moab-fst-wide-width/24839M.html"
     content = ""
     try:
@@ -95,22 +95,22 @@ if True:
     price = soup.find_all("span", class_="promo-price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     SALE: %s - Merrell.com" % match.group(0))
+        log.log_info("     SALE: %s - Merrell.com" % match.group(0))
     else:
         price = soup.find_all("span", itemprop="price")
         match = re.search("\d+\.\d\d", str(price))
         if match != None:
-            log.logInfo("     %s - Merrell.com" % match.group(0))
+            log.log_info("     %s - Merrell.com" % match.group(0))
         else:
-            log.logInfo("  Error retrieving price.")
+            log.log_info("  Error retrieving price.")
 
 
 # Subwoofers
 
 if True:
-    log.logInfo(divider)
-    log.logInfo('Best Buy - BIC F12 12" Subwoofer')
-    log.logInfo('     (210 = arbitrary target price)')
+    log.log_info(divider)
+    log.log_info('Best Buy - BIC F12 12" Subwoofer')
+    log.log_info('     (210 = arbitrary target price)')
     url = "http://www.bestbuy.com/site/bic-america-formula-12-475w-powered-subwoofer-black/4235056.p?id=1218463773881&skuId=4235056"
     content = ""
     try:
@@ -121,14 +121,14 @@ if True:
     price = soup.find_all("div", class_="item-price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     %s" % match.group(0))
+        log.log_info("     %s" % match.group(0))
     else:
-        log.logInfo("  Error retrieving price.")
+        log.log_info("  Error retrieving price.")
 
 if True:
-    log.logInfo(divider)
-    log.logInfo('Newegg - Polk PSW505 12" Subwoofer')
-    log.logInfo('     (124 = target price)')
+    log.log_info(divider)
+    log.log_info('Newegg - Polk PSW505 12" Subwoofer')
+    log.log_info('     (124 = target price)')
     url = "http://www.newegg.com/Product/Product.aspx?Item=N82E16882290130"
     content = ""
     try:
@@ -139,14 +139,14 @@ if True:
     price = soup.find_all("meta", itemprop="price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     %s" % match.group(0))
+        log.log_info("     %s" % match.group(0))
     else:
-        log.logInfo("  Error retrieving price.")
+        log.log_info("  Error retrieving price.")
 
 if True:
-    log.logInfo(divider)
-    log.logInfo('Nebraska Furniture Mart - Polk PSW125 12" Subwoofer')
-    log.logInfo('     (265 = target price)')
+    log.log_info(divider)
+    log.log_info('Nebraska Furniture Mart - Polk PSW125 12" Subwoofer')
+    log.log_info('     (265 = target price)')
     url = "https://www.nfm.com/DetailsPage.aspx?productid=31539166"
     content = ""
     try:
@@ -157,16 +157,16 @@ if True:
     price = soup.find_all("div", class_="yourprice")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     %s" % match.group(0))
+        log.log_info("     %s" % match.group(0))
     else:
-        log.logInfo("  Error retrieving price.")
+        log.log_info("  Error retrieving price.")
 
 
 # Misc
 
 if True:
-    log.logInfo(divider)
-    log.logInfo('Dick\'s Sporting Goods - Century Wavemaster')
+    log.log_info(divider)
+    log.log_info('Dick\'s Sporting Goods - Century Wavemaster')
     url = "http://www.dickssportinggoods.com/product/index.jsp?productId=12447161"
     content = ""
     try:
@@ -177,14 +177,14 @@ if True:
     price = soup.find_all("span", itemprop="price")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
-        log.logInfo("     %s" % match.group(0))
+        log.log_info("     %s" % match.group(0))
     else:
-        log.logInfo("  Error retrieving price.")
+        log.log_info("  Error retrieving price.")
 
-log.logInfo(divider)
+log.log_info(divider)
 
 if False:
-    msg = MIMEText(log.getLog())
+    msg = MIMEText(log.get_log())
     msg['Subject'] = "Message from PriceCheck.py"
     msg['From'] = email_address
     msg['To'] = email_address
@@ -193,7 +193,7 @@ if False:
     s.quit()
 
 if True:
-    filteredLog = log.getLog()
+    filteredLog = log.get_log()
     filteredLog = filteredLog.replace("\"", "\\\"")
     filteredLog = filteredLog.replace("\(", "\\\(")
     filteredLog = filteredLog.replace("\$", "\\\$")
