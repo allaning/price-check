@@ -11,5 +11,5 @@ class Logger(object):
 
     def get_log(self):
         """ Returns the log message, if any """
-        pass
+        return ""
 

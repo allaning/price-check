@@ -151,7 +151,7 @@ if True:
     except:
         pass
     soup = BeautifulSoup(content)
-    price = soup.find_all("span", class_="a-color-price")
+    price = soup.find_all("span", id="priceblock_dealprice")
     match = re.search("\d+\.\d\d", str(price))
     if match != None:
         log.log_info("     %s - Amazon.com" % match.group(0))
@@ -175,6 +175,21 @@ if True:
         log.log_info("     %s - Nebraska Furniture Mart" % match.group(0))
     else:
         log.log_info("  Error retrieving price - Nebraska Furniture Mart")
+
+if True:
+    url = "https://www.amazon.com/Polk-Audio-12-Inch-Powered-Subwoofer/dp/B000OY6CVI"
+    content = ""
+    try:
+        content = urllib2.urlopen(url).read()
+    except:
+        pass
+    soup = BeautifulSoup(content)
+    price = soup.find_all("span", id="priceblock_ourprice")
+    match = re.search("\d+\.\d\d", str(price))
+    if match != None:
+        log.log_info("     %s - Amazon.com" % match.group(0))
+    else:
+        log.log_info("  Error retrieving price - Amazon.com")
 
 
 # Misc
