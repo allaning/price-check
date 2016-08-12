@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import re
 from bs4 import BeautifulSoup
 import urllib2
@@ -8,12 +9,28 @@ from email.mime.text import MIMEText
 from ConsoleLogger import ConsoleLogger
 from StringBuilderLogger import StringBuilderLogger
 
+
 log = ConsoleLogger(None)
+
+# Comment the following line to disable email notification
 log = StringBuilderLogger(log)
+
+
+NUM_RETRIES = 5
+RETRY_DELAY_SECONDS = 30
 
 email_address = "your@email.com"
 divider = "----------------------------------------------------------"
 message = ""
+
+
+def try_function(a_function):
+    """ Try to run the function and retry upon failure for NUM_RETRIES times """
+    for i in range (NUM_RETRIES):
+        if a_function() == True:
+            break
+        time.sleep(RETRY_DELAY_SECONDS)
+
 
 print str(sys.argv)
 if len(sys.argv) > 1:
@@ -25,91 +42,52 @@ else:
 log.log_info("Price check...\n")
 
 
-# Merrell shoes
-
-if True:
-    log.log_info(divider)
-    log.log_info('Merrell Moab Ventilator Wide')
-    log.log_info('     (80 = target price)')
-    url = "http://www.merrell.com/US/en/moab-ventilator-wide-width/16220M.html"
-    content = ""
-    try:
-        content = urllib2.urlopen(url).read()
-    except:
-        pass
-    soup = BeautifulSoup(content)
-    price = soup.find_all("span", class_="promo-price")
-    match = re.search("\d+\.\d\d", str(price))
-    if match != None:
-        log.log_info("     SALE: %s - Merrell.com" % match.group(0))
-    else:
-        price = soup.find_all("span", itemprop="price")
-        match = re.search("\d+\.\d\d", str(price))
-        if match != None:
-            log.log_info("     %s - Merrell.com" % match.group(0))
-        else:
-            log.log_info("  Error retrieving price.")
-
-if True:
-    url = "http://www.dickssportinggoods.com/product/index.jsp?productId=2979956"
-    content = ""
-    try:
-        content = urllib2.urlopen(url).read()
-    except:
-        pass
-    soup = BeautifulSoup(content)
-    price = soup.find_all("span", itemprop="price")
-    match = re.search("\d+\.\d\d", str(price))
-    if match != None:
-        log.log_info("     %s - Dick\'s Sporting Goods" % match.group(0))
-    else:
-        log.log_info("  Error retrieving price - Dick\'s Sporting Goods")
-
-if True:
-    url = "https://www.rei.com/product/748515/merrell-moab-ventilator-hiking-shoes-mens"
-    content = ""
-    try:
-        content = urllib2.urlopen(url).read()
-    except:
-        pass
-    soup = BeautifulSoup(content)
-    price = soup.find_all("span", itemprop="price")
-    match = re.search("\d+\.\d\d", str(price))
-    if match != None:
-        log.log_info("     %s - REI" % match.group(0))
-    else:
-        log.log_info("  Error retrieving price - REI")
-
-
-if True:
-    log.log_info(divider)
-    log.log_info('Merrell FST Wide')
-    log.log_info('     (90 = arbitrary target price)')
-    url = "http://www.merrell.com/US/en/moab-fst-wide-width/24839M.html"
-    content = ""
-    try:
-        content = urllib2.urlopen(url).read()
-    except:
-        pass
-    soup = BeautifulSoup(content)
-    price = soup.find_all("span", class_="promo-price")
-    match = re.search("\d+\.\d\d", str(price))
-    if match != None:
-        log.log_info("     SALE: %s - Merrell.com" % match.group(0))
-    else:
-        price = soup.find_all("span", itemprop="price")
-        match = re.search("\d+\.\d\d", str(price))
-        if match != None:
-            log.log_info("     %s - Merrell.com" % match.group(0))
-        else:
-            log.log_info("  Error retrieving price.")
-
-
 # Subwoofers
 
-if True:
+def bic_v1220_1():
     log.log_info(divider)
-    log.log_info('BIC F12 12" Subwoofer')
+    log.log_info('BIC V1220 12" Down Firing Subwoofer')
+    log.log_info('     (180 = target price)')
+    url = "http://www.bestbuy.com/site/bic-america-12-430-watt-powered-subwoofer/2750541.p?id=1218348487515&skuId=2750541"
+    content = ""
+    try:
+        content = urllib2.urlopen(url).read()
+    except:
+        pass
+    soup = BeautifulSoup(content)
+    price = soup.find_all("div", class_="item-price")
+    match = re.search("\d+\.\d\d", str(price))
+    if match != None:
+        log.log_info("     %s - Best Buy" % match.group(0))
+    else:
+        log.log_info("     Error retrieving price - Best Buy")
+        return False
+    return True
+
+try_function(bic_v1220_1)
+
+def bic_v1220_2():
+    url = "http://www.newegg.com/Product/Product.aspx?Item=N82E16882007001"
+    content = ""
+    try:
+        content = urllib2.urlopen(url).read()
+    except:
+        pass
+    soup = BeautifulSoup(content)
+    price = soup.find_all("meta", itemprop="price")
+    match = re.search("\d+\.\d\d", str(price))
+    if match != None:
+        log.log_info("     %s - Newegg.com" % match.group(0))
+    else:
+        log.log_info("     Error retrieving price - Newegg.com")
+        return False
+    return True
+
+try_function(bic_v1220_2)
+
+def bic_f12_1():
+    log.log_info(divider)
+    log.log_info('BIC F12 12" Front Firing Subwoofer')
     log.log_info('     (210 = arbitrary target price)')
     url = "http://www.bestbuy.com/site/bic-america-formula-12-475w-powered-subwoofer-black/4235056.p?id=1218463773881&skuId=4235056"
     content = ""
@@ -123,9 +101,51 @@ if True:
     if match != None:
         log.log_info("     %s - Best Buy" % match.group(0))
     else:
-        log.log_info("  Error retrieving price - Best Buy")
+        log.log_info("     Error retrieving price - Best Buy")
+        return False
+    return True
 
-if True:
+try_function(bic_f12_1)
+
+def bic_f12_2():
+    url = "http://www.newegg.com/Product/Product.aspx?Item=N82E16886986001"
+    content = ""
+    try:
+        content = urllib2.urlopen(url).read()
+    except:
+        pass
+    soup = BeautifulSoup(content)
+    price = soup.find_all("meta", itemprop="price")
+    match = re.search("\d+\.\d\d", str(price))
+    if match != None:
+        log.log_info("     %s - Newegg.com" % match.group(0))
+    else:
+        log.log_info("     Error retrieving price - Newegg.com")
+        return False
+    return True
+
+try_function(bic_f12_2)
+
+def bic_f12_3():
+    url = "https://www.amazon.com/BIC-America-F12-475-Watt-Subwoofer/dp/B0015A8Y5M"
+    content = ""
+    try:
+        content = urllib2.urlopen(url).read()
+    except:
+        pass
+    soup = BeautifulSoup(content)
+    price = soup.find_all("span", id="priceblock_ourprice")
+    match = re.search("\d+\.\d\d", str(price))
+    if match != None:
+        log.log_info("     %s - Amazon.com" % match.group(0))
+    else:
+        log.log_info("     Error retrieving price - Amazon.com")
+        return False
+    return True
+
+try_function(bic_f12_3)
+
+def polk_psw505_1():
     log.log_info(divider)
     log.log_info('Polk PSW505 12" Subwoofer')
     log.log_info('     (124 = target price)')
@@ -141,9 +161,13 @@ if True:
     if match != None:
         log.log_info("     %s - Newegg.com" % match.group(0))
     else:
-        log.log_info("  Error retrieving price - Newegg.com")
+        log.log_info("     Error retrieving price - Newegg.com")
+        return False
+    return True
 
-if True:
+try_function(polk_psw505_1)
+
+def polk_psw505_2():
     url = "https://www.amazon.com/Polk-Audio-12-Inch-Powered-Subwoofer/dp/B000092TT0"
     content = ""
     try:
@@ -156,9 +180,13 @@ if True:
     if match != None:
         log.log_info("     %s - Amazon.com" % match.group(0))
     else:
-        log.log_info("  Error retrieving price - Amazon.com")
+        log.log_info("     Error retrieving price - Amazon.com")
+        return False
+    return True
 
-if True:
+try_function(polk_psw505_2)
+
+def polk_psw125_1():
     log.log_info(divider)
     log.log_info('Polk PSW125 12" Subwoofer')
     log.log_info('     (265 = target price)')
@@ -174,9 +202,13 @@ if True:
     if match != None:
         log.log_info("     %s - Nebraska Furniture Mart" % match.group(0))
     else:
-        log.log_info("  Error retrieving price - Nebraska Furniture Mart")
+        log.log_info("     Error retrieving price - Nebraska Furniture Mart")
+        return False
+    return True
 
-if True:
+try_function(polk_psw125_1)
+
+def polk_psw125_2():
     url = "https://www.amazon.com/Polk-Audio-12-Inch-Powered-Subwoofer/dp/B000OY6CVI"
     content = ""
     try:
@@ -189,12 +221,16 @@ if True:
     if match != None:
         log.log_info("     %s - Amazon.com" % match.group(0))
     else:
-        log.log_info("  Error retrieving price - Amazon.com")
+        log.log_info("     Error retrieving price - Amazon.com")
+        return False
+    return True
+
+try_function(polk_psw125_2)
 
 
 # Misc
 
-if True:
+def wavemaster_1():
     log.log_info(divider)
     log.log_info('Century Wavemaster')
     url = "http://www.dickssportinggoods.com/product/index.jsp?productId=12447161"
@@ -209,7 +245,12 @@ if True:
     if match != None:
         log.log_info("     %s - Dick\'s Sporting Goods" % match.group(0))
     else:
-        log.log_info("  Error retrieving price - Dick\'s Sporting Goods")
+        log.log_info("     Error retrieving price - Dick\'s Sporting Goods")
+        return False
+    return True
+
+try_function(wavemaster_1)
+
 
 log.log_info(divider)
 
@@ -222,11 +263,11 @@ if False:
     s.sendmail(email_address, email_address, msg.as_string())
     s.quit()
 
-if True:
-    filteredLog = log.get_log()
-    filteredLog = filteredLog.replace("\"", "\\\"")
-    filteredLog = filteredLog.replace("\(", "\\\(")
-    filteredLog = filteredLog.replace("\$", "\\\$")
-    cmd = "echo \"" + filteredLog + "\" | mail -s \"Message from PriceCheck.py\" " + email_address
+log_msg = log.get_log()
+if log_msg != "":
+    log_msg = log_msg.replace("\"", "\\\"")
+    log_msg = log_msg.replace("\(", "\\\(")
+    log_msg = log_msg.replace("\$", "\\\$")
+    cmd = "echo \"" + log_msg + "\" | mail -s \"Message from PriceCheck.py\" " + email_address
     os.system(cmd)
 
