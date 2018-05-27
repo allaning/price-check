@@ -7,3 +7,6 @@ SETUP
     sudo apt-get install python-pip
     pip install BeautifulSoup4
 
+  Install requests (module) by executing these command:
+    sudo pip install requests
+

@@ -11,10 +11,8 @@ class Item(object):
         #   will be used in the find_all command
         # If "itemprop" is specified, then the following find_all will be used:
         #   soup.find_all("span", itemprop="price")
+        # If "priceblock_ourprice" is specified, then the following find_all will be used:
+        #   soup.find_all("span", id="priceblock_ourprice")
         self.html_element = an_html_element
         pass
-
-    def get_name(self):
-        """ Returns the name of the item """
-        return str(self.name)
 
