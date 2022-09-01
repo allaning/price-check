@@ -1,21 +1,26 @@
 import sys
 import os
 import time
+import json
 import re
-import urllib2
 import requests
+from requests.exceptions import HTTPError
+from requests.exceptions import Timeout
 from bs4 import BeautifulSoup
 import smtplib
-from email.mime.text import MIMEText
 from ConsoleLogger import ConsoleLogger
 from StringBuilderLogger import StringBuilderLogger
 from Item import Item
 
 
+# Enter your SimplePush key below (see https://simplepush.io/)
+SIMPLE_PUSH_KEY = ""
+
+
 log = ConsoleLogger(None)
 
 # Comment the following line to disable email notification
-#log = StringBuilderLogger(log)
+log = StringBuilderLogger(log)
 
 
 NUM_RETRIES = 1
@@ -24,23 +29,25 @@ RETRY_DELAY_SECONDS = 2
 #RETRY_DELAY_SECONDS = 30
 
 email_address = "your@email.com"
-divider = "----------------------------------------------------------"
+email_addresses = ["your@email.com"]
+
+DIVIDER = "----------------------------------------------------------"
+
 message = ""
 
+
+price_regex = re.compile(r'EVO.151...price..\d\d\d\.\d\d')
 
 # List of items to search for prices
 items = []
 
-items.append(Item("Ryobi Orbital Sander - Home Depot", "https://www.homedepot.com/p/Ryobi-18-Volt-ONE-5-in-Cordless-Random-Orbit-Sander-Tool-Only-P411/205975756", "itemprop"))
-items.append(Item("3-Shelf - Home Depot", "https://www.homedepot.com/p/HDX-30-3-in-H-x-24-in-W-x-14-in-D-3-Shelf-Wire-Black-Shelving-Unit-31424BPS/302073746", "itemprop"))
-items.append(Item("3-Shelf - Lowes", "https://www.lowes.com/pd/Style-Selections-30-5-in-H-x-23-in-W-x-13-4-in-D-3-Tier-Steel-Freestanding-Shelving-Unit/999990400", "content"))
-items.append(Item("4-Shelf Plastic - Lowes", "https://www.lowes.com/pd/Blue-Hawk-48-in-H-x-22-in-W-x-14-25-in-D-4-Tier-Plastic-Freestanding-Shelving-Unit/1000017489", "content"))
-items.append(Item("4-Shelf Plastic (Larger) - Lowes", "https://www.lowes.com/pd/Blue-Hawk-56-5-in-H-x-36-in-W-x-24-in-D-4-Tier-Plastic-Freestanding-Shelving-Unit/3344676", "content"))
-items.append(Item("4-Shelf Steel (Larger) - Lowes", "https://www.lowes.com/pd/Style-Selections-53-in-H-x-35-7-in-W-x-14-in-D-4-Tier-Steel-Freestanding-Shelving-Unit/999990402", "content"))
-items.append(Item("Ledger Nano S - Amazon", "https://smile.amazon.com/gp/product/B01J66NF46/", "priceblock_ourprice"))
+items.append(Item("Rome Reverb Rocker at EVO", "https://www.evo.com/outlet/snowboards/rome-reverb-rocker-se-snowboard", "script"))
+items.append(Item("Divinity: Original Sin 2", "https://store.steampowered.com/app/435150/Divinity_Original_Sin_2__Definitive_Edition/", "steam"))
+items.append(Item("Age of Empires II: Definitive Edition", "https://store.steampowered.com/app/813780/Age_of_Empires_II_Definitive_Edition/", "steam"))
+#items.append(Item("Ryobi Orbital Sander - Home Depot", "https://www.homedepot.com/p/Ryobi-18-Volt-ONE-5-in-Cordless-Random-Orbit-Sander-Tool-Only-P411/205975756", "itemprop"))
 
 
-print str(sys.argv)
+print(str(sys.argv))
 if len(sys.argv) > 1:
     email_address = sys.argv[1]
 else:
@@ -60,17 +67,30 @@ def try_function(a_function):
 for item in items:
     content = ""
     try:
-        content = urllib2.urlopen(item.url).read()
-    except Exception:
-        try:
-            page = requests.get(item.url)
-            content = page.text
-        except Exception as ex:
-            log.log_info(" - " + item.name + " ... Error reading url: " + str(ex))
-            continue
+        print("\nRequesting ", item.name)
+        response = requests.get(item.url, timeout=3)
+        response.raise_for_status()
+        content = response.text
+    except HTTPError as http_err:
+        log.log_info(" - " + item.name + " ... HTTP Error reading url: " + str(http_err))
+        continue
+    except Timeout:
+        log.log_info(" - " + item.name + " ... The request timed out")
+        continue
+    except Exception as ex:
+        log.log_info(" - " + item.name + " ... Error reading url: " + str(ex))
+        continue
     soup = BeautifulSoup(content, "html.parser")
     if item.html_element == "itemprop":
         price = soup.find_all("span", itemprop="price")
+    elif item.html_element == "script":
+        product_schema = soup.find_all(id="product-schema")
+        if product_schema:
+            for prod in product_schema:
+                price_str = price_regex.search(str(prod))
+                price = price_str.group()
+    elif item.html_element == "steam":
+        price = soup.find(class_="game_purchase_price")
     elif item.html_element == "priceblock_ourprice":
         price = soup.find_all("span", id="priceblock_ourprice")
     elif item.html_element == "content":
@@ -78,9 +98,8 @@ for item in items:
         #pattern = re.compile('\d\d\.\d\d', re.DOTALL)
         pattern = re.compile('font jumbo strong', re.DOTALL)
         price = re.findall(pattern, content)
-        #aing log.log_info(str(soup))
         for pp in price:
-            log.log_info(pp) #aing
+            log.log_info(pp)
     else:
         price = soup.find_all(item.html_element)
     match = re.search("\d+\.\d\d", str(price))
@@ -90,18 +109,28 @@ for item in items:
         log.log_info(" - " + item.name + " ... Error retrieving price")
 
 
-#log.log_info(divider)
+#log.log_info(DIVIDER)
+
+
+# Use SimplePush
+if SIMPLE_PUSH_KEY is not "":
+    msg = log.get_log()
+    push_url = "https://api.simplepush.io/send/" + SIMPLE_PUSH_KEY + "/" + "Price Check/" + msg
+    print("\nSending notification...\n" + push_url)
+    response = requests.get(push_url, timeout=8)
+
 
 # Set to True to send email with results
 if email_address != "":
     log.log_info("\nSending mail to " + email_address + "...")
-    msg = MIMEText(log.get_log())
-    msg['Subject'] = "Message from PriceCheck.py"
-    msg['From'] = email_address
-    msg['To'] = email_address
+    msg = log.get_log()
+    msg = "From: " + email_address + "\n"
+    msg += "To " + email_address + "\n"
+    msg += "Subject: Message from PriceCheck.py\n\n"
+    msg += log.get_log()
     try:
         s = smtplib.SMTP('localhost')
-        s.sendmail(email_address, email_address, msg.as_string())
+        s.sendmail(email_address, email_addresses, msg)
         s.quit()
 
         log_msg = log.get_log()
